@@ -1,0 +1,16 @@
+# 在仓库根目录新建 .gitignore，内容：
+__pycache__/
+*.pyc
+.venv/
+venv/
+# 密钥隔离——铁律
+.env
+
+# 构建产物不入库（脚本即数据）
+chroma_db/
+data/*.csv
+data/docs_raw/
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
