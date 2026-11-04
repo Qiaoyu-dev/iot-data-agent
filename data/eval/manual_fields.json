@@ -1,0 +1,7 @@
+{
+  "水泵房温控系统运维手册": {
+    "alert_threshold": "85°C",
+    "device_model": "PUMP-X201",
+    "check_cycle": "每日"
+  }
+}
