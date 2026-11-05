@@ -129,5 +129,5 @@ websocket-client==1.9.2
 websockets==17.4
 xxhash==4.0.2
 yarl==1.25.1
-zhipuai==1.0.7
+zhipuai==2.1.5.20250825
 zstandard==0.25.0
