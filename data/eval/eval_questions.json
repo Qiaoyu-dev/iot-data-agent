@@ -1,0 +1,12 @@
+[
+  {"id": 1, "category": "fact", "question": "水泵房的告警阈值是多少度", "gold_answer": "85°C", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 2, "category": "fact", "question": "水泵的设备型号是什么", "gold_answer": "PUMP-X200", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 3, "category": "fact", "question": "E03故障码代表什么", "gold_answer": "数据上报中断，检查网关网络", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 4, "category": "flow", "question": "温度一直超过阈值该怎么处理", "gold_answer": "切备用泵、查管路堵塞、30分钟不回落上报停机", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 5, "category": "flow", "question": "每天巡检要做哪些事", "gold_answer": "听声音、查轴承温度70°C、看冷却液液位、看网关灯", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 6, "category": "flow", "question": "冷却液少了怎么补", "gold_answer": "低于刻度线1/3时补充同型号冷却液", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 7, "category": "edge", "question": "传感器读数感觉不准了咋整", "gold_answer": "执行校准程序（对应E02漂移）", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true},
+  {"id": 8, "category": "refuse", "question": "食堂中午几点开饭", "gold_answer": "", "gold_source": "", "should_answer": false},
+  {"id": 9, "category": "refuse", "question": "公司年假有几天", "gold_answer": "", "gold_source": "", "should_answer": false},
+  {"id": 10, "category": "multi", "question": "E02是什么故障，处理完还要做什么", "gold_answer": "读数漂移；执行校准并记录到维护记录", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+]
