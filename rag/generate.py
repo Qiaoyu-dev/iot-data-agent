@@ -2,7 +2,7 @@
 rag/generate.py
 作用：检索生成端到端——retrieve 拿证据块，阈值过滤后拼进 prompt，
      DeepSeek 生成带来源引用的分析报告
-运行：在仓库根目录执行  python rag/generate.py
+运行：在仓库根目录执行  python -m rag.generate
 依赖：langchain-openai；.env 配好 DEEPSEEK_API_KEY
 """
 from langchain_openai import ChatOpenAI

@@ -57,4 +57,4 @@ if __name__ == "__main__":
     q = "温度超过告警阈值怎么办"
     for i, h in enumerate(retrieve(q), 1):
         print(f"[{i}] (来自 {h['kb']}/{h['source']}, 距离 {h['distance']:.3f})")
-        print(f"    {h['text'][:200]}...\n")
+        print(f"    {h['text'][:100]}...\n")

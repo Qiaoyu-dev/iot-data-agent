@@ -2,7 +2,7 @@
 rag/search_test.py
 作用：用 4 组梯度 query 批量测试检索效果，
      观察距离分数分布，校准"相关性阈值"
-运行：在仓库根目录执行  python rag/search_test.py
+运行：在仓库根目录执行  python -m rag.search_test
 """
 from rag.retrieve import retrieve
 
