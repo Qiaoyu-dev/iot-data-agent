@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 from langchain_core.tools import tool
 
-DATA = Path("data/sensor_readings_clean.csv")
+DATA = Path("data/processed/sensor_readings_clean.csv")
 
 def _load():
     if not DATA.exists():

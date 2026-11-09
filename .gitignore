@@ -16,8 +16,9 @@ venv/
 # ===== 构建产物（脚本即数据，重新生成即可，不入库） =====
 # Chroma 向量数据库，跑 build_index 就会重建
 chroma_db/
-# 生成的时序数据 CSV，跑数据流水线脚本就能重新生成
-data/*.csv
+# 生成/处理后的数据产物（CSV、图），跑数据流水线脚本就能重新生成
+data/raw/
+data/processed/
 # 原始文档目录，属于上游资料，不进版本库
 data/docs_raw/
 
