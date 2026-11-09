@@ -1,5 +1,5 @@
 {"id": 1, "category": "fact", "question": "水泵房的告警阈值是多少度", "gold_answer": "85°C", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
-{"id": 2, "category": "fact", "question": "水泵的设备型号是什么", "gold_answer": "PUMP-X200", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+{"id": 2, "category": "fact", "question": "水泵的设备型号是什么", "gold_answer": "PUMP-X201", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 3, "category": "fact", "question": "E03故障码代表什么", "gold_answer": "数据上报中断，检查网关网络", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 4, "category": "flow", "question": "温度一直超过阈值该怎么处理", "gold_answer": "切备用泵、查管路堵塞、30分钟不回落上报停机", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 5, "category": "flow", "question": "每天巡检要做哪些事", "gold_answer": "听声音、查轴承温度70°C、看冷却液液位、看网关灯", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
