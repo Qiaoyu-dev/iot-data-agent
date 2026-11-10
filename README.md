@@ -15,6 +15,13 @@ LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 ## 评测指标
 （W2 用 RAGAS 跑出基线后补充）
 
+## 评测基线（W1 · 2026-11-05）
+| 指标 | 数值 | 说明 |
+|---|---|---|
+| Hit Rate@3 | XX%（N条评测集） | 检索命中率 |
+| 拒答准确率 | XX% | 库外问题正确拒答 |
+| 知识库规模 | iot_manuals XX chunks | 距离阈值 1.2 |
+
 ## 快速启动
 1. pip install -r requirements.txt
 2. 复制 .env.example 为 .env，填入你的 API Key

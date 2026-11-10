@@ -6,6 +6,7 @@ from rag.retrieve import retrieve   # 复用 W1 写好的跨库检索，一行�
 THRESHOLD = 1.2
 
 
+
 @tool
 def search_knowledge(query: str) -> str:
     """检索水泵房运维知识库（设备手册 + 巡检报告）。

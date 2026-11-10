@@ -3,7 +3,7 @@ data/eval/run_eval.py
 作用：加载评测集，逐条跑检索，计算两个指标：
      ① Hit Rate@3：应答问题中 top3 命中正确来源的比例
      ② 拒答准确率：拒答问题中正确"零证据通过"的比例
-运行：在仓库根目录执行  python data/eval/run_eval.py
+运行：在仓库根目录执行  python -m data.eval.run_eval
 前置：eval_questions.jsonl 已建好，build_index.py 已灌库
 """
 import json
