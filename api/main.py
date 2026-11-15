@@ -3,17 +3,22 @@
 改动：路由全部 async 化；graph.invoke → graph.ainvoke；新增 SSE 流式端点
 """
 import json
+from typing import Annotated
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, StringConstraints
 from langchain_core.messages import AIMessageChunk
 from agent.graph import graph
+from api.errors import install_error_handlers
 
 app = FastAPI(title="IoT 数据分析 Agent")
+install_error_handlers(app)       #挂在app创建之后，路由注册之前
+
 
 class ChatRequest(BaseModel):
-    message: str
-    thread_id: str = "default"
+    """对话入参：空消息、超长消息在校验层就拒绝，不进业务逻辑"""
+    message: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)] = Field(description="用户提问，1-500 字")
+    thread_id: str = Field(default="default", max_length=64, description="会话隔离键")
 
 # ---------- 健康检查 ----------
 @app.get("/health")

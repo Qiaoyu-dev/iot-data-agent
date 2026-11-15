@@ -20,7 +20,44 @@ if "thread_id" not in st.session_state:
     # thread_id 对应后端 MemorySaver 的会话隔离键（周五手册）
     st.session_state.thread_id = f"web-{uuid.uuid4().hex[:8]}"
 
+def call_chat(prompt: str) -> str | None:
+    """非流式调用 /chat，按错误类型给出不同提示。
+    返回 None 表示失败（调用方不要写入历史）
+    """
+    try:
+        resp = requests.post(
+            f"{API_BASE}/chat",
+            json={"message": prompt, "thread_id": st.session_state.thread_id},
+            timeout=60,
+        )
+        resp.raise_for_status()
+        return resp.json()["answer"]
 
+    except requests.exceptions.ConnectionError:
+        # 错误 1：后端没起 —— 开发环境最常见，提示要具体到命令
+        st.error("🔌 连不上后端服务。请确认已启动：uvicorn api.main:app --reload --port 8000")
+        return None
+
+    except requests.exceptions.Timeout:
+        # 错误 2：超时 —— 可能模型慢或网络差，给可执行动作
+        st.warning("⏱️ 后端响应超时（60s）。问题可能较长或模型繁忙，请简化后重试。")
+        return None
+
+    except requests.exceptions.HTTPError as e:
+        status = e.response.status_code
+        # 从统一响应结构里取 message 和 request_id
+        try:
+            data = e.response.json()
+        except ValueError:
+            data = {}
+        rid = data.get("request_id", "-")
+        if status == 422:
+            # 错误 3：用户输入问题 —— 告诉用户怎么改
+            st.error(f"✏️ {data.get('message', '输入不合法')}，请修改后重试。")
+        else:
+            # 错误 4：服务端故障 —— 把 request_id 显出来，方便对照日志
+            st.error(f"🛠️ 服务异常（{status}）。请把请求编号 {rid} 反馈给开发，便于定位。")
+        return None
 def stream_reply(message: str):
     """请求 /chat/stream，逐个 token yield。
     周六手册的 SSE 帧格式：data: {"token": "..."}\n\n，收尾帧 data: {"done": true}
