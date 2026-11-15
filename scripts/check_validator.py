@@ -7,8 +7,7 @@ scripts/check_validator.py
 from pydantic import ValidationError
 
 # 你的 ChatRequest 定义在哪就 import 哪：多数人写在 api/main.py
-from api.main import ChatRequest
-# 如果单独放 api/schemas.py，改成：from api.schemas import ChatRequest
+from api.schemas import ChatRequest
 
 CASES = [
     ("空字符串",     "",          422),
