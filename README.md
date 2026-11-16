@@ -10,18 +10,7 @@ Agent 自动查询实时数据、检索运维手册，给出带引用来源的�
 LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 
 ## 架构图
-```mermaid
-flowchart LR    
-U["运维用户"] -->|"提问"| W["Streamlit 前端"]    
-W -->|"POST /chat"| F["FastAPI"]    
-F --> G["LangGraph"]    
-G -->|"工具路由"| T1["sensor_stats"]    
-G -->|"工具路由"| T2["search_knowledge"]    
-T2 -->|"相似度检索"| C[("Chroma 向量库")]    
-G -->|"记忆"| M[("MemorySaver")]    
-G -->|"生成"| L["DeepSeek LLM"]    
-F -.->|"SSE 流式"| W
-```
+   ![系统架构](docs/architecture.png)
 
 ## 评测指标
 RAGAS 离线评测（跑分后回填真实值）：
