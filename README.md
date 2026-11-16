@@ -12,16 +12,15 @@ LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 ## 架构图
 ```mermaid
 flowchart LR
-    U[运维用户] -->|自然语言提问| W[Streamlit 前端<br/>web/app.py]
-    W -->|POST /chat 与 /chat/stream| F[FastAPI<br/>api/main.py]
-    F --> G[LangGraph<br/>agent/graph.py]
-    G -->|工具路由 tools_condition| T1[传感器统计<br/>sensor_stats]
-    G -->|工具路由 tools_condition| T2[知识库检索<br/>search_knowledge]
-    T2 -->|相似度检索| C[(Chroma 向量库<br/>智谱 embedding-3)]
-    G -->|多轮记忆| M[(MemorySaver)]
-    G -->|生成/流式| L[DeepSeek LLM]
-    F -.SSE 流式返回.-> W
-```
+    U["运维用户"] --> W["自然语言提问\nStreamlit 前端\nweb/app.py"]
+    W --> F["POST /chat 与 /chat/stream\nFastAPI\napi/main.py"]
+    F --> G["LangGraph\nagent/graph.py"]
+    G --> T1["工具路由 tools_condition\n传感器统计\nsensor_stats"]
+    G --> T2["工具路由 tools_condition\n知识库检索\nsearch_knowledge"]
+    T2 --> C["相似度检索\nChroma 向量库\n智谱 embedding-3"]
+    G --> M["多轮记忆\nMemorySaver"]
+    G --> L["生成/流式\nDeepSeek LLM"]
+    F -. "SSE 流式返回" .-> W
 
 ## 评测指标
 RAGAS 离线评测（跑分后回填真实值）：
