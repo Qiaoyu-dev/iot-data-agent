@@ -1,16 +1,28 @@
 # IoT 设备时序数据分析 Agent
 
 ## 业务背景
-工厂传感器每天产生海量时序数据，运维靠人工盯盘、查手册——慢且容易漏。
-本项目是一个 IoT 设备数据分析 Agent：运维人员用自然语言提问
-（"TEMP-001 昨晚为什么报警？"），Agent 自动查询实时数据、
-检索运维手册，给出带引用来源的诊断结论。
+水泵房每天产生海量时序数据（泵压、温度、振动），运维靠人工盯盘、查手册——慢且容易漏。
+本项目是一个 IoT 设备运维 Agent：运维用自然语言提问
+（"PUMP-X201 昨晚为什么报警？""TEMP-001 这周温度趋势？"），
+Agent 自动查询实时数据、检索运维手册，给出带引用来源的诊断结论。
 
 ## 技术栈
 LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 
 ## 架构图
-（W2 补充）
+## 架构图
+```mermaid
+flowchart LR
+    U[运维用户] -->|自然语言提问| W[Streamlit 前端<br/>web/app.py]
+    W -->|POST /chat 与 /chat/stream| F[FastAPI<br/>api/main.py]
+    F --> G[LangGraph<br/>agent/graph.py]
+    G -->|工具路由 tools_condition| T1[传感器统计<br/>sensor_stats]
+    G -->|工具路由 tools_condition| T2[知识库检索<br/>search_knowledge]
+    T2 -->|相似度检索| C[(Chroma 向量库<br/>智谱 embedding-3)]
+    G -->|多轮记忆| M[(MemorySaver)]
+    G -->|生成/流式| L[DeepSeek LLM]
+    F -.SSE 流式返回.-> W
+```
 
 ## 评测指标
 （W2 用 RAGAS 跑出基线后补充）
@@ -20,10 +32,13 @@ LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 |---|---|---|
 | Hit Rate@3 | 100%（8/8） | 5类分层测评集，检索命中率 |
 | 拒答准确率 | 100%（2/2） | 库外问题正确拒答 |
-| 知识库规模 | iot_manuals N chunks | 距离阈值 1.2 |
+| 知识库规模 | iot_manuals 7 chunks | 距离阈值 1.2 |
 
 ## 快速启动
 1. pip install -r requirements.txt
 2. 复制 .env.example 为 .env，填入你的 API Key
-3. python rag/build_index.py  # 建向量库
-（后续步骤随开发补充）
+3. python rag/build_index.py        # 建向量库
+4. uvicorn api.main:app --port 8000 # 启动后端（终端 A）
+5. curl http://127.0.0.1:8000/health            # 应返回 {"status":"ok"}
+   curl -X POST http://127.0.0.1:8000/chat -H "Content-Type: application/json" -d "{\"message\":\"PUMP-X201 的告警阈值是多少？\"}"
+6. streamlit run web/app.py       #启动前端（终端B）
