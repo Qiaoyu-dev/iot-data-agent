@@ -18,9 +18,9 @@ LangGraph · Chroma · FastAPI · DeepSeek · 智谱 embedding-3 · RAGAS
 ## 评测基线（W1 · 2026-11-05）
 | 指标 | 数值 | 说明 |
 |---|---|---|
-| Hit Rate@3 | XX%（N条评测集） | 检索命中率 |
-| 拒答准确率 | XX% | 库外问题正确拒答 |
-| 知识库规模 | iot_manuals XX chunks | 距离阈值 1.2 |
+| Hit Rate@3 | 100%（8/8） | 5类分层测评集，检索命中率 |
+| 拒答准确率 | 100%（2/2） | 库外问题正确拒答 |
+| 知识库规模 | iot_manuals N chunks | 距离阈值 1.2 |
 
 ## 快速启动
 1. pip install -r requirements.txt
