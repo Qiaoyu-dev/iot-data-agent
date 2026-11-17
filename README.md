@@ -56,3 +56,28 @@ RAGAS 离线评测（三阶段对比）：
 > 注：Python 3.14 下 ragas 的依赖 scikit-network 无 cp314 wheel、需 MSVC 编译，`pip install -r requirements.txt` 会卡在它上面。
 > 但它只在 ragas 生成测试集时用到，跑 faithfulness/answer_relevancy/context_recall 三指标评测不需要。
 > 本项目 `.venv` 已用 `pip install ragas==0.4.4 --no-deps` 跳过它装好；全新复现时同样用 `--no-deps` 装 ragas、再补齐其余依赖即可。
+
+## 分支管理
+
+采用 main / dev 双分支：
+
+| 分支 | 用途 |
+|---|---|
+| `main` | 稳定可展示版本，每个里程碑收敛后从 dev 合并，保证 clone 下来就能直接跑通 |
+| `dev` | 日常开发分支，新功能、实验、评测先行落地于此 |
+
+开发流程：
+
+```bash
+# 日常开发在 dev
+git checkout dev
+git add . && git commit -m "feat: ..."
+git push
+
+# 里程碑稳定后，把 dev 合并进 main 作为发布快照
+git checkout main
+git merge dev          # 想保留合并记录可用 --no-ff
+git push
+```
+
+> 约定：`main` 只放「能跑、能展示」的稳定版本，`dev` 才是日常开发的战场。
