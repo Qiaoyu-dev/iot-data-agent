@@ -6,11 +6,19 @@ from rag.retrieve import retrieve
 
 THRESHOLD = 1.12
 
-DOMAIN_TERMS = (
-    "泵", "温度", "传感器", "告警", "故障", "巡检", "冷却液", "轴承",
-    "滤芯", "滤网", "压差", "校准", "保养", "润滑", "密封", "绝缘",
-    "网关", "上报", "备件", "库存", "领用", "平台", "报表", "阈值",
-    "TEMP-", "PUMP-", "E0", "LOTO", "UPS",
+# 域外黑名单：明显不属于水泵房设备运维的话题才拒答。
+# 其余（含"停电恢复 / 历史数据 / 三点复测"这类不含专业词的合法问题）一律放行，
+# 交给检索距离阈值兜底——避免白名单误杀合法问题（此前 Q17/Q22/Q24 因此被误拒答）。
+OUT_OF_DOMAIN_TERMS = (
+    # 餐饮 / 生活
+    "食堂", "开饭", "午饭", "晚饭", "早饭", "点餐", "吃饭",
+    # 人事 / 行政
+    "年假", "请假", "放假", "考勤", "工资", "薪资", "招聘", "社保", "公积金",
+    # 公司事务 / 闲聊
+    "年终总结", "团建", "年会", "福利",
+    "天气", "股票", "游戏", "电影", "音乐", "新闻", "明星",
+    # 通用无关请求
+    "写诗", "翻译", "画画", "写代码",
 )
 
 # 编码型 token：E03 / TEMP-001 / PUMP-X201 这类"字母+数字"标识符
@@ -18,8 +26,9 @@ _TOKEN_RE = re.compile(r"[A-Z]{1,5}[-_]?\d{2,4}")
 
 
 def _in_domain(query: str) -> bool:
+    """黑名单排除：命中域外话题返回 False 拒答，否则放行给阈值判定。"""
     q = query.upper()
-    return any(t.upper() in q for t in DOMAIN_TERMS)
+    return not any(t.upper() in q for t in OUT_OF_DOMAIN_TERMS)
 
 
 def _has_exact_hit(query: str, text: str) -> bool:
