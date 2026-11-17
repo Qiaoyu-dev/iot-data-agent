@@ -42,7 +42,8 @@ RAGAS 离线评测（三阶段对比）：
 | 知识库规模 | iot_manuals 44 chunks | 距离阈值 1.12 |
 
 ## 前端页面展示
-   ![前端页面](docs\frontend.png)
+   ![前端页面](docs/frontend.png)
+
 ## 快速启动
 1. pip install -r requirements.txt
 2. 复制 .env.example 为 .env，填入你的 API Key
