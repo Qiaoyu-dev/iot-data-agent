@@ -1,5 +1,7 @@
 # web/app.py —— IoT 数据 Agent 的 Streamlit 前端
-# 职责：只负责展示和交互；所有智能逻辑走 FastAPI 后端（周六手册 v2）
+# 职责：只负责展示和交互；所有智能逻辑走 FastAPI 后端
+# 启动命令：streamlit run web/app.py
+
 import json
 import uuid
 
