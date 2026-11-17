@@ -1,10 +1,30 @@
 {"id": 1, "category": "fact", "question": "水泵房的告警阈值是多少度", "gold_answer": "85°C", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
-{"id": 2, "category": "fact", "question": "水泵的设备型号是什么", "gold_answer": "PUMP-X201", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+{"id": 2, "category": "fact", "question": "水泵的设备型号是什么", "gold_answer": "PUMP-X201", "gold_source": "水泵房温控系统运维手册.md", "gold_keywords": ["PUMP-X201"], "should_answer": true}
 {"id": 3, "category": "fact", "question": "E03故障码代表什么", "gold_answer": "数据上报中断，检查网关网络", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 4, "category": "flow", "question": "温度一直超过阈值该怎么处理", "gold_answer": "切备用泵、查管路堵塞、30分钟不回落上报停机", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 5, "category": "flow", "question": "每天巡检要做哪些事", "gold_answer": "听声音、查轴承温度70°C、看冷却液液位、看网关灯", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
 {"id": 6, "category": "flow", "question": "冷却液少了怎么补", "gold_answer": "低于刻度线1/3时补充同型号冷却液", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
-{"id": 7, "category": "edge", "question": "传感器读数感觉不准了咋整", "gold_answer": "执行校准程序（对应E02漂移）", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+{"id": 7, "category": "edge", "question": "传感器读数感觉不准了咋整", "gold_answer": "执行校准程序（对应E02漂移）", "gold_source": "水泵房温控系统运维手册.md", "gold_keywords": ["校准"], "should_answer": true}
 {"id": 8, "category": "refuse", "question": "食堂中午几点开饭", "gold_answer": "", "gold_source": "", "should_answer": false}
 {"id": 9, "category": "refuse", "question": "公司年假有几天", "gold_answer": "", "gold_source": "", "should_answer": false}
 {"id": 10, "category": "multi", "question": "E02是什么故障，处理完还要做什么", "gold_answer": "读数漂移；执行校准并记录到维护记录", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+{"id": 11, "category": "fact", "question": "过滤器压差超过多少需要清洗", "gold_answer": "0.15MPa", "gold_source": "水泵机组保养规范.md", "should_answer": true}
+{"id": 12, "category": "fact", "question": "轴承温度超过多少要检查", "gold_answer": "70°C", "gold_source": "水泵房温控系统运维手册.md", "gold_keywords": ["70°C"],"should_answer": true}
+{"id": 13, "category": "fact", "question": "传感器多久校准一次", "gold_answer": "每6个月一次，安排在4月和10月的第一个周一", "gold_source": "温度传感器校准作业指导书.md", "should_answer": true}
+{"id": 14, "category": "fact", "question": "机械密封滴漏多少算泄漏", "gold_answer": "超过3滴/分钟", "gold_source": "水泵机组保养规范.md", "should_answer": true}
+{"id": 15, "category": "fact", "question": "温度传感器备件安全库存是几支", "gold_answer": "3支", "gold_source": "备品备件与耗材管理.md", "should_answer": true}
+{"id": 16, "category": "flow", "question": "冷却液泄漏了怎么处理", "gold_answer": "关阀切断泄漏源、设警戒区吸附、补液至2/3以上、超20升停机换管段", "gold_source": "冷却水系统应急处置预案.md", "should_answer": true}
+{"id": 17, "category": "flow", "question": "停电恢复后先启动什么", "gold_answer": "先启动冷却塔风机，再启动主泵，顺序不可颠倒", "gold_source": "冷却水系统应急处置预案.md", "should_answer": true}
+{"id": 18, "category": "flow", "question": "备用泵切换失败怎么办", "gold_answer": "手动切泵、检查切换阀、报修电机；两台都坏则启动外部应急供水", "gold_source": "冷却水系统应急处置预案.md", "should_answer": true}
+{"id": 19, "category": "flow", "question": "传感器零点校准怎么做", "gold_answer": "0°C冰水混合物稳定5分钟，偏差超±0.5°C执行零点修正，直到±0.3°C以内", "gold_source": "温度传感器校准作业指导书.md", "should_answer": true}
+{"id": 20, "category": "flow", "question": "平台产生告警后多久要确认", "gold_answer": "15分钟内", "gold_source": "运维平台操作说明.md", "should_answer": true}
+{"id": 21, "category": "flow", "question": "备件领用要走什么流程", "gold_answer": "平台提交领用单、主管审批、库管出库登记、旧件登记回收", "gold_source": "备品备件与耗材管理.md", "should_answer": true}
+{"id": 22, "category": "fact", "question": "历史数据能查多久以前的", "gold_answer": "90天内可查原始数据，更早只能查归档报表", "gold_source": "运维平台操作说明.md", "should_answer": true}
+{"id": 23, "category": "edge", "question": "滤芯洗完压差还是不降怎么办", "gold_answer": "滤网破损超10%须整体更换，不得补焊", "gold_source": "水泵机组保养规范.md", "should_answer": true}
+{"id": 24, "category": "edge", "question": "三点复测有一点超差算合格吗", "gold_answer": "不算，任一超差须更换传感器，不得仅靠软件修正", "gold_source": "温度传感器校准作业指导书.md", "should_answer": true}
+{"id": 25, "category": "edge", "question": "误报太多要不要查传感器", "gold_answer": "月度误报率超5%须排查传感器", "gold_source": "运维平台操作说明.md", "should_answer": true}
+{"id": 26, "category": "multi", "question": "E04报错后备用泵修好了，之后还要做什么", "gold_answer": "维修期间备用泵不得停机；修复后按保养规范做绝缘检测等年保项目", "gold_source": "水泵房温控系统运维手册.md", "should_answer": true}
+{"id": 27, "category": "multi", "question": "高温告警处理完除了记录还要交什么", "gold_answer": "24小时内提交根因分析报告，含告警时间、处置动作、根本原因、改进措施", "gold_source": "冷却水系统应急处置预案.md", "should_answer": true}
+{"id": 28, "category": "refuse", "question": "这台泵多少钱买的", "gold_answer": "", "gold_source": "", "should_answer": false}
+{"id": 29, "category": "refuse", "question": "公司食堂在几楼", "gold_answer": "", "gold_source": "", "should_answer": false}
+{"id": 30, "category": "refuse", "question": "帮我写一份年终总结", "gold_answer": "", "gold_source": "", "should_answer": false}

@@ -1,39 +1,62 @@
+import re
+
 from langchain_core.tools import tool
-from rag.retrieve import retrieve   # 复用 W1 写好的跨库检索，一行不改
 
-# 与 W1 相同的距离阈值：L2 距离 < 1.2 才认为检索结果相关
-# 这是防幻觉第一道闸门，改造后依然生效
-THRESHOLD = 1.2
+from rag.retrieve import retrieve
 
+THRESHOLD = 1.12
+
+DOMAIN_TERMS = (
+    "泵", "温度", "传感器", "告警", "故障", "巡检", "冷却液", "轴承",
+    "滤芯", "滤网", "压差", "校准", "保养", "润滑", "密封", "绝缘",
+    "网关", "上报", "备件", "库存", "领用", "平台", "报表", "阈值",
+    "TEMP-", "PUMP-", "E0", "LOTO", "UPS",
+)
+
+# 编码型 token：E03 / TEMP-001 / PUMP-X201 这类"字母+数字"标识符
+_TOKEN_RE = re.compile(r"[A-Z]{1,5}[-_]?\d{2,4}")
+
+
+def _in_domain(query: str) -> bool:
+    q = query.upper()
+    return any(t.upper() in q for t in DOMAIN_TERMS)
+
+
+def _has_exact_hit(query: str, text: str) -> bool:
+    """query 里的编码 token 出现在 text 里 → 精确命中，绕过距离阈值"""
+    tokens = _TOKEN_RE.findall(query.upper())
+    if not tokens:
+        return False
+    up = text.upper()
+    return any(t in up for t in tokens)
+
+
+def retrieve_contexts(query: str, top_k: int = 8, max_keep: int = 3) -> list[dict]:
+    """检索 + 阈值/编码精确命中过滤 + 排序 + 截断，返回最终送入模型的 chunk 列表。
+
+    这是「取上下文」的唯一生产逻辑：search_knowledge 和评测脚本都走它，避免两处漂移。
+    """
+    hits = retrieve(query, top_k=top_k)
+    kept = [h for h in hits
+            if h["distance"] < THRESHOLD or _has_exact_hit(query, h["text"])]
+    # 精确命中的排最前，保证模型优先看到正确的那块
+    kept.sort(key=lambda h: (0 if _has_exact_hit(query, h["text"]) else 1,
+                             h["distance"]))
+    return kept[:max_keep]
 
 
 @tool
 def search_knowledge(query: str) -> str:
-    """检索水泵房运维知识库（设备手册 + 巡检报告）。
+    """检索水泵房运维知识库（设备手册 + 巡检报告）。"""
+    if not _in_domain(query):
+        return ("该问题不属于水泵房设备运维范畴，知识库中没有相关资料。"
+                "请如实告知用户你只能回答设备运维相关问题，不要编造。")
 
-    适用场景：用户询问设备参数、告警阈值、巡检流程、故障码、
-    处置步骤等【运维知识】时调用本工具。
-    不适用：传感器实时数据统计（用 sensor_stats）、闲聊（直接回答）。
-
-    Args:
-        query: 用户的具体问题或检索关键词，尽量保留原话中的设备号/参数名。
-
-    Returns:
-        带 [编号] 和来源标注的资料片段；若无相关资料则返回明确的"未找到"说明。
-    """
-    # ① 跨库检索（iot_manuals + iot_reports 两库合并，按距离升序）
-    hits = retrieve(query)
-
-    # ② 阈值过滤：宁可拒答，不硬答（防幻觉第一闸门）
-    # retrieve() 返回 dict 列表：{"text","source","kb","distance"}，用键访问而不是解包
-    kept = [h for h in hits if h["distance"] < THRESHOLD]
-
-    # ③ 没找到 → 明确告诉 LLM"没有资料"，它会如实拒答
+    kept = retrieve_contexts(query)
     if not kept:
         return ("知识库中未找到与该问题相关的资料（检索结果全部低于相关阈值）。"
                 "请如实告知用户无法从现有资料中回答，不要编造内容。")
 
-    # ④ 格式化成带 [编号] 的文本，LLM 生成回答时逐句引用编号
     lines = []
     for i, h in enumerate(kept, 1):
         src = f"{h['kb']}/{h['source']}"

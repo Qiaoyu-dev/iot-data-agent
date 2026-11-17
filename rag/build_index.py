@@ -22,8 +22,13 @@ client = chromadb.PersistentClient(path="chroma_db")  # 持久化：重启不丢
 
 
 def build_kb(sub: Path):
-    """把一个子目录灌成一个独立知识库"""
+    """把一个子目录灌成一个独立知识库（先清空再写，避免旧 chunk 残留）"""
     coll_name = f"iot_{sub.name}"
+    # 先删旧 collection：chunk 变少时位置 ID(#0..#N) 覆盖不到旧的高位 ID，会残留孤儿 chunk
+    try:
+        client.delete_collection(coll_name)
+    except Exception:
+        pass
     coll = client.get_or_create_collection(coll_name)
     total = 0
     for md in sorted(sub.glob("*.md")):

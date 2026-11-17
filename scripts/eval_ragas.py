@@ -35,15 +35,13 @@ from ragas.embeddings import LangchainEmbeddingsWrapper
 from langchain_openai import ChatOpenAI
 from langchain_core.embeddings import Embeddings
 
-# 项目自身模块：复用 W1 检索 + W2 Agent，一行不改
+# 项目自身模块：复用 W2 Agent + 生产检索链路（与 search_knowledge 同源）
 from agent.graph import graph
-from rag.retrieve import retrieve
+from tools.knowledge import retrieve_contexts
 from rag.embed import embed
 
 # ============ 配置区（按需改） ============
-EVAL_PATH = Path("data/eval/eval_questions.jsonl")   # W1 检索评测集；RAGAS 只吃其中 should_answer=true 的行
-THRESHOLD = 1.2                            # 与 tools/knowledge.py 一致的距离阈值
-TOP_K = 3                                  # 与 retrieve 默认一致
+EVAL_PATH = Path("data/eval/eval_questions.jsonl")   # 检索评测集；RAGAS 只吃其中 should_answer=true 的行
 LIMIT = None                               # 验证时设 10 跑子集，确认无误后改回 None 跑全量
 
 # ============ 1. 把智谱 embedding 包成 LangChain Embeddings 接口 ============
@@ -85,9 +83,8 @@ async def run_one(question: str, tid: str):
         config={"configurable": {"thread_id": tid}},
     )
     answer = result["messages"][-1].content
-    # 4b. 拿检索上下文（复用 W1 的 retrieve；阈值过滤与 search_knowledge 保持一致）
-    hits = retrieve(question, top_k=TOP_K)
-    contexts = [h["text"] for h in hits if h["distance"] < THRESHOLD]
+    # 4b. 拿检索上下文（走生产 search_knowledge 同一取上下文逻辑，避免两处漂移）
+    contexts = [h["text"] for h in retrieve_contexts(question)]
     return answer, contexts
 
 async def collect(rows):
