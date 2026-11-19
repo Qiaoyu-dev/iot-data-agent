@@ -57,6 +57,10 @@ RAGAS 离线评测（三阶段对比）：
 > 但它只在 ragas 生成测试集时用到，跑 faithfulness/answer_relevancy/context_recall 三指标评测不需要。
 > 本项目 `.venv` 已用 `pip install ragas==0.4.4 --no-deps` 跳过它装好；全新复现时同样用 `--no-deps` 装 ragas、再补齐其余依赖即可。
 
+> 注：国内直连 HuggingFace 会被墙（HTTP 502），下载模型需走镜像。运行 BGE reranker（`python -m rag.rerank`）前先设：
+> `export HF_ENDPOINT=https://hf-mirror.com`（PowerShell 用 `$env:HF_ENDPOINT="https://hf-mirror.com"`）。
+> 首次会下载约 1.1GB 模型，之后走本地缓存。
+
 ## 分支管理
 
 采用 main / dev 双分支：

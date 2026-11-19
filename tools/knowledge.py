@@ -4,6 +4,8 @@ from langchain_core.tools import tool
 
 from rag.retrieve import retrieve
 
+from rag.rerank import rerank
+
 THRESHOLD = 1.12
 
 # 域外黑名单：明显不属于水泵房设备运维的话题才拒答。
@@ -24,6 +26,9 @@ OUT_OF_DOMAIN_TERMS = (
 # 编码型 token：E03 / TEMP-001 / PUMP-X201 这类"字母+数字"标识符
 _TOKEN_RE = re.compile(r"[A-Z]{1,5}[-_]?\d{2,4}")
 
+# 粗召回候选数：先多拿，交给 rerank 精排
+RECALL_K = 20
+
 
 def _in_domain(query: str) -> bool:
     """黑名单排除：命中域外话题返回 False 拒答，否则放行给阈值判定。"""
@@ -40,17 +45,20 @@ def _has_exact_hit(query: str, text: str) -> bool:
     return any(t in up for t in tokens)
 
 
-def retrieve_contexts(query: str, top_k: int = 8, max_keep: int = 3) -> list[dict]:
-    """检索 + 阈值/编码精确命中过滤 + 排序 + 截断，返回最终送入模型的 chunk 列表。
 
-    这是「取上下文」的唯一生产逻辑：search_knowledge 和评测脚本都走它，避免两处漂移。
+def retrieve_contexts(query: str, top_k: int = 8, max_keep: int = 3) -> list[dict]:
+    """检索 + 阈值过滤 + Rerank 精排 + 截断，返回最终送入模型的 chunk 列表。
+    这是「取上下文」的唯一生产逻辑：search_knowledge 和评测脚本都走它，改一处全局生效。
     """
-    hits = retrieve(query, top_k=top_k)
+    hits = retrieve(query, top_k=RECALL_K)          # ① 粗召回：向量多拿候选
     kept = [h for h in hits
-            if h["distance"] < THRESHOLD or _has_exact_hit(query, h["text"])]
-    # 精确命中的排最前，保证模型优先看到正确的那块
+            if h["distance"] < THRESHOLD or _has_exact_hit(query, h["text"])]  # ② 阈值兜底（保留拒答）
+    if len(kept) > 1:                                 # ③ Rerank 精排：语义重排
+        for idx, score in rerank(query, [h["text"] for h in kept]):
+            kept[idx]["score"] = score
+    # ④ 精确命中（编码 token）仍排最前，其余按 rerank 分降序
     kept.sort(key=lambda h: (0 if _has_exact_hit(query, h["text"]) else 1,
-                             h["distance"]))
+                             -h.get("score", 0.0)))
     return kept[:max_keep]
 
 

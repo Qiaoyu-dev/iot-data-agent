@@ -10,7 +10,8 @@ import pandas as pd
 import requests
 import streamlit as st
 
-API_BASE = "http://127.0.0.1:8000"   # FastAPI 后端地址
+import os
+API_BASE = os.getenv("API_BASE","http://127.0.0.1:8000" )  # FastAPI 后端地址
 
 st.set_page_config(page_title="IoT 数据 Agent", page_icon="🤖", layout="wide")
 
@@ -33,7 +34,7 @@ def call_chat(prompt: str) -> str | None:
             timeout=60,
         )
         resp.raise_for_status()
-        return resp.json()["answer"]
+        return resp.json().get("reply", "")
 
     except requests.exceptions.ConnectionError:
         # 错误 1：后端没起 —— 开发环境最常见，提示要具体到命令

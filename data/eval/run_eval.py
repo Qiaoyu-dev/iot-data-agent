@@ -1,35 +1,22 @@
 """
-data/eval/run_eval.py  (v2 · 内容判据版)
+data/eval/run_eval.py  (v3 · 生产同源版)
 改动：
   1. Hit Rate 改为「答案关键词命中」，不再死磕文件名
-  2. 拒答判定改为走 search_knowledge 工具，与生产链路完全一致
+  2. 检索上下文直接复用 tools.knowledge.retrieve_contexts，与生产链路同源
 运行：python -m data.eval.run_eval
 """
 import json
 from pathlib import Path
 
-from rag.retrieve import retrieve
-from tools.knowledge import search_knowledge, _has_exact_hit, THRESHOLD
+from tools.knowledge import search_knowledge, retrieve_contexts
 
 EVAL_FILE = Path("data/eval/eval_questions.jsonl")
 TOP_K = 3        # 最终送入模型的上下文条数（对齐生产 kept[:3]）
-CANDIDATE_K = 8  # 候选池大小（对齐生产 search_knowledge 的 top_k=8）
-# 阈值直接复用 tools.knowledge.THRESHOLD，避免两处阈值漂移
 
 
 def load_questions() -> list[dict]:
     lines = EVAL_FILE.read_text(encoding="utf-8").splitlines()
     return [json.loads(ln) for ln in lines if ln.strip()]
-
-
-def kept_hits(question: str) -> list[dict]:
-    """检索 + 阈值/编码精确命中过滤 + 排序，完全对齐生产 search_knowledge"""
-    hits = retrieve(question, top_k=CANDIDATE_K)
-    kept = [h for h in hits
-            if h["distance"] < THRESHOLD or _has_exact_hit(question, h["text"])]
-    kept.sort(key=lambda h: (0 if _has_exact_hit(question, h["text"]) else 1,
-                             h["distance"]))
-    return kept[:TOP_K]
 
 
 def is_hit(q: dict, hits: list[dict]) -> bool:
@@ -49,7 +36,7 @@ def main():
     # ===== 指标一：Hit Rate@3 =====
     hit = 0
     for q in answerable:
-        hits = kept_hits(q["question"])
+        hits = retrieve_contexts(q["question"], max_keep=TOP_K)
         ok = is_hit(q, hits)
         hit += ok
         srcs = [h["source"] for h in hits]
