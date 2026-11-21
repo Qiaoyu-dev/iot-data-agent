@@ -85,3 +85,28 @@ git push
 ```
 
 > 约定：`main` 只放「能跑、能展示」的稳定版本，`dev` 才是日常开发的战场。
+
+
+## 技术栈
+
+- **编排**：LangGraph（StateGraph + MemorySaver 会话记忆）
+- **LLM**：DeepSeek-chat（openai 兼容，temperature=0.2）
+- **Embedding**：智谱 embedding-3；**Rerank**：BGE Reranker-v2-m3
+- **向量库**：Chroma（多知识库隔离：iot_manuals / iot_reports）
+- **后端**：FastAPI（全异步 + SSE 流式 /chat/stream）
+- **前端**：Streamlit
+- **评测**：RAGAS（Faithfulness / Answer Relevancy / Context Precision / Context Recall）
+- **部署**：Docker + docker-compose
+- **测试**：pytest（单元测试 + 接口集成测试）
+
+## 个人职责
+
+- 基于 LangGraph 编排「检索 + 数据分析」双工具 Agent，用 tools_condition 实现工具自主路由，
+  以 MemorySaver 支撑多轮会话记忆（thread_id 隔离）。
+- 自建水泵房运维多知识库 RAG：结构化切分 + 段落贪心合并（44 chunks），
+  接入 BGE Reranker 做交叉编码精排，检索链路 answer_relevancy 0.619 → 0.789，
+  context_recall 0.658 → 0.975，Hit Rate@3 25/25。
+- 设计「域外黑名单 + 距离阈值 + 编码精确命中」三级拒答机制，
+  将无关问题拒答准确率做到 5/5，修复 3 道假拒答（白名单 → 黑名单）。
+- 用 FastAPI 重写后端入口为全异步，新增 SSE 流式端点（逐 token 输出）。
+- 搭建 Docker Compose 一键部署（后端 + 前端 + 数据卷持久化），落地 pytest 单测与集成测试。
