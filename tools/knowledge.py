@@ -26,6 +26,11 @@ OUT_OF_DOMAIN_TERMS = (
     "写诗", "翻译", "画画", "写代码",
 )
 
+# 子串匹配覆盖不了的变体写法（如「写一首诗」「写首诗」）
+OUT_OF_DOMAIN_PATTERNS = (
+    re.compile(r"写.{0,4}诗"),
+)
+
 # 编码型 token：E03 / TEMP-001 / PUMP-X201 这类"字母+数字"标识符
 _TOKEN_RE = re.compile(r"[A-Z]{1,5}[-_]?\d{2,4}")
 
@@ -36,6 +41,8 @@ RECALL_K = 20
 def _in_domain(query: str) -> bool:
     """黑名单排除：命中域外话题返回 False 拒答，否则放行给阈值判定。"""
     q = query.upper()
+    if any(p.search(q) for p in OUT_OF_DOMAIN_PATTERNS):
+        return False
     return not any(t.upper() in q for t in OUT_OF_DOMAIN_TERMS)
 
 
