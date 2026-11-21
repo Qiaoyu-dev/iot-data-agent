@@ -1,0 +1,15 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.env
+.claude
+chroma_db
+data/raw
+data/processed
+data/ragas_result.csv
+ragas_before.txt
+ragas_after.txt
+*.log

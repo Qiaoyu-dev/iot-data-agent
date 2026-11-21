@@ -1,4 +1,5 @@
 import re
+import logging
 
 from langchain_core.tools import tool
 
@@ -7,6 +8,8 @@ from rag.retrieve import retrieve
 from rag.rerank import rerank
 
 THRESHOLD = 1.12
+
+logger = logging.getLogger(__name__)
 
 # 域外黑名单：明显不属于水泵房设备运维的话题才拒答。
 # 其余（含"停电恢复 / 历史数据 / 三点复测"这类不含专业词的合法问题）一律放行，
@@ -54,8 +57,14 @@ def retrieve_contexts(query: str, top_k: int = 8, max_keep: int = 3) -> list[dic
     kept = [h for h in hits
             if h["distance"] < THRESHOLD or _has_exact_hit(query, h["text"])]  # ② 阈值兜底（保留拒答）
     if len(kept) > 1:                                 # ③ Rerank 精排：语义重排
-        for idx, score in rerank(query, [h["text"] for h in kept]):
-            kept[idx]["score"] = score
+        try:
+            ranked = rerank(query, [h["text"] for h in kept])
+        except Exception as exc:                       # 模型未安装/下载失败时退回距离排序
+            logger.warning("rerank 不可用，按向量距离排序：%s", exc)
+            ranked = None
+        if ranked:
+            for idx, score in ranked:
+                kept[idx]["score"] = score
     # ④ 精确命中（编码 token）仍排最前，其余按 rerank 分降序
     kept.sort(key=lambda h: (0 if _has_exact_hit(query, h["text"]) else 1,
                              -h.get("score", 0.0)))

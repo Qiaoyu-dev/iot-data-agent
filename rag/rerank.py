@@ -6,8 +6,6 @@ rag/rerank.py
       所以召回多拿候选（top_k=20），rerank 重排后取最准的前几个。
 运行自测：python -m rag.rerank
 """
-from FlagEmbedding import FlagReranker
-
 # 首次调用 rerank() 时才加载模型（约 1.1GB，从 HuggingFace 下载后走本地缓存）
 # 中文手册场景用 bge-reranker-v2-m3（多语言，中文效果好）
 # use_fp16=False：没有独显时用 CPU 跑，慢一点但稳；有 CUDA 可改 True 提速
@@ -18,6 +16,7 @@ def _get_reranker():
     """懒加载：import 本模块时不联网、不加载模型，第一次 rerank() 才初始化。"""
     global _reranker
     if _reranker is None:
+        from FlagEmbedding import FlagReranker
         _reranker = FlagReranker("BAAI/bge-reranker-v2-m3", use_fp16=False)
     return _reranker
 
