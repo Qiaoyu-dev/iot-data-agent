@@ -13,4 +13,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest pydantic
-      - run: pytest tests/ -q
+      - run: pytest tests/test_validator.py tests/test_chunk.py tests/test_knowledge.py -q

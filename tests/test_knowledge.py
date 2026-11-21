@@ -1,10 +1,10 @@
 """
 tests/test_knowledge.py
-单元测试：tools/knowledge.py 的纯函数 —— _in_domain / _has_exact_hit。
+单元测试：tools/domain.py 的纯函数 —— _in_domain / _has_exact_hit。
 原则：纯函数测试不烧 API key、不依赖网络，快且可复现。
 运行：pytest tests/test_knowledge.py -v
 """
-from tools import knowledge as K
+from tools import domain as K
 
 
 def test_in_domain_rejects_out_of_domain():
