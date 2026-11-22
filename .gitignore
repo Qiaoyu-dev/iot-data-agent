@@ -31,3 +31,6 @@ Thumbs.db
 # ===== 运行日志（运行时产生，不入库） =====
 logs/
 *.log
+
+# ===== 评测产物（RAGAS CSV、评测日志） =====
+artifacts/
